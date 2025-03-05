@@ -25,3 +25,5 @@ app.post('/add-book', (req, res) => {
     return res.send({ success: true });
   });
 });
+
+app.listen(3000, () => { console.log('Server started at port 3000')} );
