@@ -10,3 +10,17 @@ needle.post('http://localhost:3000/add-book', {
     console.log(res.body);
 }
 );
+
+// GET request by ISBN and author
+needle.get('http://localhost:3000/find-by-isbn-author?isbn=978-0-7475-3269-9&amp;author=J.K+Rowling', 
+  (err, res) => {
+    console.log(res.body);
+  }
+);
+
+// GET request by author only
+needle.get('http://localhost:3000/find-by-author?author=J.K+Rowling', 
+  (err, res) => {
+    console.log(res.body);
+  }
+);

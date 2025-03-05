@@ -9,5 +9,8 @@
   },
   "author": "",
   "license": "ISC",
-  "keywords": []
+  "keywords": [],
+  "dependencies": {
+    "needle": "^3.3.1"
+  }
 }
