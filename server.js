@@ -26,4 +26,26 @@ app.post('/add-book', (req, res) => {
   });
 });
 
+app.get('/find-by-isbn-author', (req, res) => { // get method to retrieve the details of the book by isbn and author
+  const { isbn, author } = req.query;
+
+  fs.readFile('books.txt', (err, data) => { // reads the file to retrieve the book details
+    const lines = data.toString().split('\n');
+    const foundBooks = [];
+
+    for (const line of lines) { // loops through each line in the file
+      const [bookName, bookISBN, bookAuthor, yearPublished] = line.split(',');
+      if (bookISBN === isbn && bookAuthor === author) { // checks if ISBN and author matches
+        foundBooks.push({ bookName, isbn: bookISBN, author: bookAuthor, yearPublished }); // pushes the found book to the array
+      }
+    }
+
+    if (foundBooks.length > 0) {
+      return res.send(foundBooks); // sends matched book details
+    } else {
+      return res.send({ success: false, message: 'Book not found' });
+    }
+  });
+});
+
 app.listen(3000, () => { console.log('Server started at port 3000')} );
