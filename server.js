@@ -26,48 +26,65 @@ app.post('/add-book', (req, res) => {
   });
 });
 
-app.get('/find-by-isbn-author', (req, res) => { // get method to retrieve the details of the book by isbn and author
-  const { isbn, author } = req.query;
+// GET method to find book by ISBN and Author
+app.get('/find-by-isbn-author', (req, res) => {
+  const { isbn, author } = req.query; // extracting ISBN and author from query parameters
 
-  fs.readFile('books.txt', (err, data) => { // reads the file to retrieve the book details
-    const lines = data.toString().split('\n');
-    const foundBooks = [];
-
-    for (const line of lines) { // loops through each line in the file
-      const [bookName, bookISBN, bookAuthor, yearPublished] = line.split(',');
-      if (bookISBN === isbn && bookAuthor === author) { // checks if ISBN and author matches
-        foundBooks.push({ bookName, isbn: bookISBN, author: bookAuthor, yearPublished }); // pushes the found book to the array
-      }
+  fs.readFile('books.txt', (err, data) => {
+    if (err) {
+      return res.send('Error reading file');
     }
 
-    if (foundBooks.length > 0) {
-      return res.send(foundBooks); // sends matched book details
-    } else {
-      return res.send({ success: false, message: 'Book not found' });
-    }
-  });
-});
-
-app.get('/find-by-author', (req, res) => { // get method to retrieve the details of the book by author
-  const { author } = req.query;
-
-  fs.readFile('books.txt', (err, data) => { // reads the file to retrieve the book details
     const lines = data.toString().split('\n'); // splitting file data by lines
-    const booksByAuthor = [];
+    let result = '';
 
-    for (const line of lines) { // loops through each line in the file
+    // loops through each line in the file
+    for (const line of lines) {
+      if (!line.trim()) continue; // skip empty lines
       const [bookName, bookISBN, bookAuthor, yearPublished] = line.split(',');
-      if (bookAuthor === author) { // checks if author matches
-        booksByAuthor.push({ bookName, isbn: bookISBN, author: bookAuthor, yearPublished }); // pushes the found book in the array
+      // checks if ISBN and author match
+      if (bookISBN === isbn && bookAuthor === author) {
+        result += `<p><strong>${bookName}</strong><br> ISBN: ${bookISBN}<br> Author: ${bookAuthor}<br> Year Published: ${yearPublished}</p>`;
       }
     }
 
-    if (booksByAuthor.length > 0) {
-      return res.send(booksByAuthor); // sends the details of the found book by author
+    // sends matched book details
+    if (result) {
+      return res.send(result);
     } else {
-      return res.send({ success: false, message: 'Book not found' });
+      return res.send({ success: false, message: 'Book not found'});
     }
   });
 });
 
+// GET method to find book by Author Only
+app.get('/find-by-author', (req, res) => {
+  const { author } = req.query; // extracting author from query parameters
+
+  fs.readFile('books.txt', (err, data) => {
+    if (err) {
+      return res.send('Error reading file');
+    }
+
+    const lines = data.toString().split('\n'); // splitting file data by lines
+    let result = '';
+
+    
+    for (const line of lines) {// loops through each line in the file
+      if (!line.trim()) continue; // skip empty lines
+      const [bookName, bookISBN, bookAuthor, yearPublished] = line.split(',');
+      // checks if author matches
+      if (bookAuthor === author) {
+        result += `<p><strong>${bookName}</strong><br> ISBN: ${bookISBN}<br> Author: ${bookAuthor}<br> Year Published: ${yearPublished}</p>`;
+      }
+    }
+
+    if (result) { // sends the details of the found book by author
+      return res.send(result);
+    } else {
+      return res.send({ success: false, message: 'Book not found'});
+    }
+  });
+});
+//afafafa
 app.listen(3000, () => { console.log('Server started at port 3000')} );
